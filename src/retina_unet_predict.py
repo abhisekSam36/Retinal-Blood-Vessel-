@@ -21,7 +21,7 @@ from sklearn.metrics import roc_curve
 from sklearn.metrics import roc_auc_score
 from sklearn.metrics import confusion_matrix
 from sklearn.metrics import precision_recall_curve
-from sklearn.metrics import jaccard_similarity_score
+from sklearn.metrics import jaccard_score
 from sklearn.metrics import f1_score
 from sklearn.metrics import accuracy_score
 
@@ -38,7 +38,7 @@ from extract_patches import get_data_testing
 from extract_patches import get_data_testing_overlap
 # pre_processing.py
 from pre_processing import my_PreProc
-from nn_models_v2 import get_unet
+from retina_unet_training import get_unet, get_gnet
 
 config_name = None
 if len(sys.argv) == 2:
@@ -130,11 +130,11 @@ else:
 
 # ================ Run the prediction of the patches ==================================
 best_last = config.get('testing settings', 'best_last')
-# Load the saved model
-model = model_from_json(open(path_experiment+name_experiment +'_architecture.json').read())
-# n_ch = patches_imgs_test.shape[1]
-# print("Patches shape:", patches_imgs_test.shape)
-# model = get_unet(n_ch, patch_height, patch_width)
+# Build the model architecture
+n_ch = 1  # Greyscale input images have 1 channel
+# ----- Ensure this function call matches the model you trained -----
+model = get_gnet(n_ch, patch_height, patch_width)
+# -------------------------------------------------------------------
 model.load_weights(path_experiment+name_experiment + '_'+best_last+'_weights.h5')
 start = time.time()  # start timing for inference
 # Calculate the predictions
@@ -294,7 +294,7 @@ if float(confusion[1,1]+confusion[0,1])!=0:
 print("Precision: " +str(precision))
 
 #Jaccard similarity index
-jaccard_index = jaccard_similarity_score(y_true, y_pred, normalize=True)
+jaccard_index = jaccard_score(y_true, y_pred)
 print("\nJaccard similarity score: " +str(jaccard_index))
 
 #F1 score
