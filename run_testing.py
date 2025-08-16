@@ -1,49 +1,40 @@
 ###################################################
 #
-#   Script to execute the prediction
+#   Script to execute the prediction & evaluation
 #
 ##################################################
 
-import os, sys, time
-import configparser
+import os, sys, time, configparser
 
 start = time.time()
-config_name = None
-if len(sys.argv) == 2:
-    config_name = sys.argv[1]
-else:
-    print("Wrong Augment!")
+
+if len(sys.argv) != 2:
+    print("Usage: python run_testing.py configuration_drive.txt")
     exit(1)
 
-# config file to read from
+config_name = sys.argv[1]
+
+# read config
 config = configparser.RawConfigParser()
 config.read(config_name)
-# ===========================================
-# name of the experiment!!
+
+# experiment name
 name_experiment = config.get('experiment name', 'name')
-nohup = config.getboolean('testing settings', 'nohup')   #std output on log file?
+nohup = config.getboolean('testing settings', 'nohup')   # log to file?
 
-run_GPU = ''
-
-#create a folder for the results if not existing already
+# create result folder if not existing
 result_dir = name_experiment
-print("\n1. Create directory for the results (if not already existing)")
-if os.path.exists(result_dir):
-    pass
-elif sys.platform=='win32':
-    os.system('md ' + result_dir)
-else:
-    os.system('mkdir -p ' + result_dir)
+os.makedirs(result_dir, exist_ok=True)
 
-
-# finally run the prediction
+# run prediction
+print("\n1. Running prediction...")
 if nohup:
-    print("\n2. Run the prediction on GPU  with nohup")
-    os.system(run_GPU + ' nohup python -u ./src/retina_unet_predict.py ' + config_name +
-              ' > ' + './'+name_experiment+'/'+name_experiment+'_prediction.nohup')
+    cmd = f'nohup python -u retina_unet_predict.py {config_name} > {name_experiment}/{name_experiment}_prediction.nohup &'
 else:
-    print("\n2. Run the prediction on GPU (no nohup)")
-    os.system(run_GPU + ' python ./src/retina_unet_predict.py ' + config_name)
+    cmd = f'python retina_unet_predict.py {config_name}'
+
+print(f"Executing: {cmd}")
+os.system(cmd)
 
 end = time.time()
-print("Running time (in sed): ", end-start)
+print(f"\n✅ Prediction completed in {(end-start):.2f} sec. Results in: {name_experiment}/")

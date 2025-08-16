@@ -66,7 +66,7 @@ def get_unet(n_ch,patch_height,patch_width):
 
     return model
 
-# A corrected version of the gnet/LadderNet model
+
 def get_gnet(n_ch, patch_height, patch_width):
     inputs = Input((n_ch, patch_height, patch_width))
     conv1 = Conv2D(32, (3, 3), activation='relu', padding='same', data_format='channels_first')(inputs)

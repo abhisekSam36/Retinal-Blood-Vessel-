@@ -9,14 +9,13 @@ test_border_masks = DRIVE_dataset_borderMasks_test.hdf5
 dataset_name = DRIVE
 
 [experiment name]
-name = test_gnet
-
+# folder where models & results will be saved
+name = attention_unet_drive
 
 [data attributes]
 # Dimensions of the patches extracted from the full images
 patch_height = 48
 patch_width = 48
-
 
 [training settings]
 # Number of total patches:
@@ -24,26 +23,26 @@ N_subimgs = 160000
 # if patches are extracted only inside the field of view:
 inside_FOV = False
 # Number of training epochs
-N_epochs = 4
+N_epochs = 50
 batch_size = 32
 # if running with nohup
 nohup = False
+# whether to resume from best or last weights
 best_last = best
-pretain_model = test
-
+# name of the pretrained experiment (same as [experiment name].name if resuming)
+pretain_model = attention_unet_drive
 
 [testing settings]
-#Choose the model to test: best==epoch with min loss, last==last epoch
+# Choose the model to test: best==epoch with min loss, last==last epoch
 best_last = best
-#number of full images for the test (max 20)
+# number of full images for the test (max 20)
 full_images_to_test = 20
-#How many original-groundTruth-prediction images are visualized in each image
+# How many original-groundTruth-prediction images are visualized in each image
 N_group_visual = 1
-#Compute average in the prediction, improve results but require more patches to be predicted
+# Compute average in the prediction, improve results but require more patches to be predicted
 average_mode = True
-#average_mode = False
-#Only if average_mode==True. Stride for patch extraction, lower value require more patches to be predicted
+# Stride for patch extraction (if average_mode==True)
 stride_height = 20
 stride_width = 20
-#if running with nohup
+# if running with nohup
 nohup = False
