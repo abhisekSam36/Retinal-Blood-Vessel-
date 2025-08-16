@@ -9,14 +9,12 @@ test_border_masks = DRIVE_dataset_borderMasks_test.hdf5
 dataset_name = DRIVE
 
 [experiment name]
-name = test_gnet_m
-
+name = test_unet_mod   ; <-- change name so results don’t overwrite old run
 
 [data attributes]
 # Dimensions of the patches extracted from the full images
 patch_height = 48
 patch_width = 48
-
 
 [training settings]
 # Number of total patches:
@@ -30,7 +28,6 @@ batch_size = 32
 nohup = False
 best_last = best
 pretain_model = test
-
 
 [testing settings]
 #Choose the model to test: best==epoch with min loss, last==last epoch
@@ -47,3 +44,19 @@ stride_height = 20
 stride_width = 20
 #if running with nohup
 nohup = False
+
+[model]
+# Options: unet, unet_mod
+model_type = unet_mod
+
+# Toggle attention / cbam / se
+use_attention = True
+use_cbam = False
+use_se = False
+dropout = 0.2
+
+# Loss function: bce_dice, tversky, focal_tversky, categorical_crossentropy
+loss_function = bce_dice
+tversky_alpha = 0.7
+tversky_beta = 0.3
+focal_gamma = 0.75

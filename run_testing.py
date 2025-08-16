@@ -1,40 +1,49 @@
 ###################################################
 #
-#   Script to execute the prediction & evaluation
+#   Script to execute the prediction
 #
 ##################################################
 
-import os, sys, time, configparser
+import os, sys, time
+import configparser
 
 start = time.time()
-
-if len(sys.argv) != 2:
-    print("Usage: python run_testing.py configuration_drive.txt")
+config_name = None
+if len(sys.argv) == 2:
+    config_name = sys.argv[1]
+else:
+    print("Wrong Augment!")
     exit(1)
 
-config_name = sys.argv[1]
-
-# read config
+# config file to read from
 config = configparser.RawConfigParser()
 config.read(config_name)
-
-# experiment name
+# ===========================================
+# name of the experiment!!
 name_experiment = config.get('experiment name', 'name')
-nohup = config.getboolean('testing settings', 'nohup')   # log to file?
+nohup = config.getboolean('testing settings', 'nohup')   #std output on log file?
 
-# create result folder if not existing
+run_GPU = ''
+
+#create a folder for the results if not existing already
 result_dir = name_experiment
-os.makedirs(result_dir, exist_ok=True)
-
-# run prediction
-print("\n1. Running prediction...")
-if nohup:
-    cmd = f'nohup python -u retina_unet_predict.py {config_name} > {name_experiment}/{name_experiment}_prediction.nohup &'
+print("\n1. Create directory for the results (if not already existing)")
+if os.path.exists(result_dir):
+    pass
+elif sys.platform=='win32':
+    os.system('md ' + result_dir)
 else:
-    cmd = f'python retina_unet_predict.py {config_name}'
+    os.system('mkdir -p ' + result_dir)
 
-print(f"Executing: {cmd}")
-os.system(cmd)
+
+# finally run the prediction
+if nohup:
+    print("\n2. Run the prediction on GPU  with nohup")
+    os.system(run_GPU + ' nohup python -u ./src/retina_unet_predict.py ' + config_name +
+              ' > ' + './'+name_experiment+'/'+name_experiment+'_prediction.nohup')
+else:
+    print("\n2. Run the prediction on GPU (no nohup)")
+    os.system(run_GPU + ' python ./src/retina_unet_predict.py ' + config_name)
 
 end = time.time()
-print(f"\n✅ Prediction completed in {(end-start):.2f} sec. Results in: {name_experiment}/")
+print("Running time (in sed): ", end-start)
