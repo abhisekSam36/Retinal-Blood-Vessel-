@@ -11,7 +11,7 @@ This project provides a deep learning pipeline for segmenting blood vessels in r
 *LadderNet Architecture Diagram*
 
 ### Segmentation Results
-
+![alt text](Images/result_drive.png)
 The figure below shows sample segmentation results from the original paper on the DRIVE, STARE, and CHASE\_DB1 datasets.
 *Example results from the paper (a) Original Image (b) Ground Truth (c) U-Net Prediction (d) LadderNet Prediction.*
 
